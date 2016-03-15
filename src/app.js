@@ -1,4 +1,4 @@
-//import libraries 
+//import libraries
 var path = require('path'); //path is a built-in node library to handle file system paths
 var express = require('express'); //express is a popular Model-View-Controller framework for Node
 var compression = require('compression'); //compression library to gzip responses for smaller/faster transfer
@@ -12,10 +12,10 @@ var router = require('./router.js'); //import our router.js file to handle the M
 
 //MONGODB address to connect to.
 //process.env.MONGOLAB_URI is the variable automatically put into your node application by Heroku is you are using mongoLab
-//otherwise fallback to localhost. The string after mongodb://localhost is the database name. It can be anything you want. 
+//otherwise fallback to localhost. The string after mongodb://localhost is the database name. It can be anything you want.
 var dbURL = process.env.MONGOLAB_URI || "mongodb://localhost/simpleMVCExample";
 
-//call mongoose's connect function and pass in the url. If there are any errors connecting, we will throw it and kill the server. 
+//call mongoose's connect function and pass in the url. If there are any errors connecting, we will throw it and kill the server.
 //Once connected, the mongoose package will stay connected for every file that requires it in this project
 var db = mongoose.connect(dbURL, function(err) {
     if(err) {
@@ -26,7 +26,7 @@ var db = mongoose.connect(dbURL, function(err) {
 
 
 //Port set by process.env.PORT environment variable.
-//If the process.env.PORT variable or the env.NODE_PORT variables do not exist, use port 3000    
+//If the process.env.PORT variable or the env.NODE_PORT variables do not exist, use port 3000
 var port = process.env.PORT || process.env.NODE_PORT || 3000;
 
 //call express to get an Express MVC server object
@@ -36,7 +36,7 @@ var app = express();
 //This option tells express to use /assets in a URL path as a static mirror to our client folder
 //Any requests to /assets will map to the client folder to find a file
 //For example going to /assets/img/favicon.png would return the favicon image
-app.use('/assets', express.static(path.resolve(__dirname+'../../client/')));
+app.use('/assets', express.static(path.resolve(__dirname+'../client/')));
 
 //Call compression and tell the app to use it
 app.use(compression());
@@ -54,10 +54,10 @@ app.use(bodyParser.json());
 app.set('view engine', 'jade');
 
 //set the views path to the template directory (not shown in this example but needed for express to work)
-app.set('views', __dirname + '../../views');
+app.set('views', __dirname + '../views');
 
 //call favicon with the favicon path and tell the app to use it
-app.use(favicon(__dirname + '../../client/img/favicon.png'));
+app.use(favicon(__dirname + '../client/img/favicon.png'));
 
 //call the cookie parser library and tell express to use it
 app.use(cookieParser());
@@ -67,10 +67,9 @@ router(app);
 
 //Tell the app to listen on the specified port
 var server = app.listen(port, function(err) {
-    //if the app fails, throw the err 
+    //if the app fails, throw the err
     if (err) {
       throw err;
     }
     console.log('Listening on port ' + port);
 });
-
