@@ -7,7 +7,7 @@ html(lang="en")
     a(href="/") Home
     a(href="/page1") Page 1
     a(href="/page3") Page 3
-    form(action="/setName", method="POST")
+    form(action="/setCatName", method="POST")
       | First name:
       input(type="text", name="firstname", value="")
       | Last name:
@@ -24,7 +24,7 @@ html(lang="en")
     br
     br
     //form to find a cat by full name (instead of first name and last name)
-    form(action="/findByName", method="GET")
+    form(action="/findByCatName", method="GET")
       | Name to search for:
       input(type="text", name="name", value="")
       input(type="submit", value="Submit")   

@@ -4,6 +4,8 @@ var models = require('../models'); //pull in our models. This will automatically
 //get the Cat model
 var Cat = models.Cat.CatModel;
 
+var Dog = models.Dog.DogModel;
+
 //default fake data so that we have something to work with until we make a real Cat
 var defaultData = {
     name: "unknown",
@@ -144,11 +146,51 @@ var setCatName = function(req, res) {
     });
 };
 
+//function to handle a request to set the name
+//controller functions in Express receive the full HTTP request
+//and get a pre-filled out response object to send
+//ADDITIONALLY, with body-parser we will get the body/form/POST data in the request as req.body
+var setDogName = function(req, res) {
+
+    //check if the required fields exist
+    //normally you would also perform validation to know if the data they sent you was real
+    if(!req.body.firstname || !req.body.lastname || !req.body.breed || !req.body.age) {
+        //if not respond with a 400 error (either through json or a web page depending on the client dev)
+        return res.status(400).json({error: "firstname,lastname, breed and age are all required"});
+    }
+
+    //if required fields are good, then set name
+    var name = req.body.firstname + " " + req.body.lastname;
+
+        //dummy JSON to insert into database
+    var dogData = {
+        name: name,
+        breed: req.body.breed,
+        age: req.body.age
+    };
+
+    //create a new object of CatModel with the object to save
+    var newDog = new Dog(dogData);
+
+    //Save the newCat object to the database
+    newDog.save(function(err) {
+        if(err) {
+            return res.json({err:err}); //if error, return it
+        }
+
+        //set the lastAdded cat to our newest cat object. This way we can update it dynamically
+        lastAdded = newDog;
+
+        //return success
+        return res.json({name: name});
+    });
+};
+
 
 //function to handle requests search for a name and return the object
 //controller functions in Express receive the full HTTP request
 //and a pre-filled out response object to send
-var searchName = function(req,res) {
+var searchCatName = function(req,res) {
 
     //check if there is a query parameter for name
     //BUT WAIT!!?!
@@ -178,6 +220,53 @@ var searchName = function(req,res) {
 
         //if a match, send the match back
         return res.json({name: doc.name, beds: doc.bedsOwned});
+    });
+
+};
+
+//function to handle requests search for a name and return the object
+//controller functions in Express receive the full HTTP request
+//and a pre-filled out response object to send
+var searchDogName = function(req,res) {
+
+    //check if there is a query parameter for name
+    //BUT WAIT!!?!
+    //Why is this req.query and not req.body like the others
+    //This is a GET request. Those come as query parameters in the URL
+    //For POST requests like the other ones in here, those come in a request body because they aren't a query
+    //POSTS send data to add while GETS query for a page or data (such as a search)
+    if(!req.query.name) {
+        return res.json({error: "Name is required to perform a search"});
+    }
+
+    //Call our Cat's static findByName function. Since this is a static function, we can just call it without an object
+    //Methods like sayName are attached only to each object instance (not static)
+    //pass in a callback (like we specified in the Cat model
+    //Normally would you break this code up, but I'm trying to keep it together so it's easier to see how the system works
+    //For that reason, I gave it an anonymous callback instead of a named function you'd have to go find
+    Dog.findByName(req.query.name, function(err, doc) {
+        //errs, handle them
+        if(err) {
+            return res.json({err:err}); //if error, return it
+        }
+
+        //if no matches, let them know (does not necessarily have to be an error since technically it worked correctly)
+        if(!doc) {
+            return res.json({error: "No dogs found"});
+        }
+
+      
+        doc.age++;
+        doc.save(function (err) {
+          if (err) {
+            console.log(err);
+          }
+            console.log(doc);
+        });
+
+
+        //if a match, send the match back
+        return res.json({name: doc.name, breed: doc.breed, age: doc.age});
     });
 
 };
@@ -224,8 +313,10 @@ module.exports = {
     page2: hostPage2,
     page3: hostPage3,
     getName: getName,
-    setName: setName,
+    setCatName: setCatName,
+    setDogName: setDogName,
     updateLast: updateLast,
-    searchName: searchName,
+    searchCatName: searchCatName,
+    searchDogName: searchDogName,
     notFound: notFound
 };

@@ -7,7 +7,7 @@ html(lang="en")
     a(href="/") Home
     a(href="/page1") Page 1
     a(href="/page2") Page 2
-    form(action="/setName", method="POST")
+    form(action="/setDogName", method="POST")
       | First name:
       input(type="text", name="firstname", value="")
       | Last name:
@@ -21,9 +21,7 @@ html(lang="en")
     br
     
     //form to find a dog by full name (instead of first name and last name)
-    form(action="/findByName", method="GET")
+    form(action="/findByDogName", method="GET")
       | Name to search for:
       input(type="text", name="name", value="")
-      | Change age:
-      input(type="number", name="changeage", value="")
       input(type="submit", value="Submit")   
